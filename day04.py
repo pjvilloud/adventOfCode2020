@@ -967,7 +967,8 @@ test_pass = passports[0]
 number_of_valid_passports = 0
 print "There are", len(passports), "passports"
 for passport in passports:
-    mask = ["0", "0", "0", "0", "0", "0", "0", "0"]
+    mask = []
+    mask = ["0" for i in range(8)]
     for passport_field in passport.split("\n"):
         for i in range(len(fields)):
             if passport_field[0:3] == fields[i] and re.match("^" + fields_validation[i] + "$", passport_field[4:len(passport_field)]):
