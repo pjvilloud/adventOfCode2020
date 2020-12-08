@@ -605,7 +605,9 @@ dotted black bags contain no other bags."""
 
 colors_map = dict()
 
-rules = input_test.split("\n")
+colors_map_with_numbers = dict()
+
+rules = input.split("\n")
 for rule in rules:
     bag_container = rule[0:rule.index("bags contain")].strip(" ")
     bags_inside_container = rule[rule.index("contain") + 7:len(rule)]
@@ -616,6 +618,10 @@ for rule in rules:
             if color_bag not in colors_map.keys():
                 colors_map[color_bag] = set()
             colors_map[color_bag].add(bag_container)
+            if bag_container not in colors_map_with_numbers.keys():
+                colors_map_with_numbers[bag_container] = list()
+            for i in range(number_of_bags):
+                colors_map_with_numbers[bag_container].append(color_bag)
 
 
 def bags_can_contain(color, color_set=set()):
@@ -626,4 +632,12 @@ def bags_can_contain(color, color_set=set()):
     return color_set
 
 
+def total_number_of_bags(color, color_list=list()):
+    color_list.append(color)
+    if color in colors_map_with_numbers.keys():
+        for c in colors_map_with_numbers.get(color):
+            total_number_of_bags(c, color_list)
+    return color_list
+
 print "The answer is to first half is", len(bags_can_contain("shiny gold")) - 1
+print "The answer is to second half is", len(total_number_of_bags("shiny gold")) - 1
