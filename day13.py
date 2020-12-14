@@ -166,6 +166,7 @@ range_ids = range(len(bus_ids_filtered_int))
 range_ids.remove(bus_ids_filtered_int.index(max_bus_ids))
 
 while n < max_timestamp:
+    print n
     for i in range_ids:
         number = bus_ids_filtered_int[i]
         if (max_bus_ids * n - (index_max - bus_ids.index(str(number)))) \
