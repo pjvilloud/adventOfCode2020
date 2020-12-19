@@ -291,14 +291,34 @@ nearby_tickets = split_input[2].splitlines()[1:]
 
 sum_invalid_values = 0
 
+valid_tickets = list()
+
+
+def value_is_valid(val, rule):
+    value_rule = rule.split(",")
+    return int(value_rule[0].split("-")[0]) <= val <= int(value_rule[0].split("-")[1]) or \
+           int(value_rule[1].split("-")[0]) <= val <= int(value_rule[1].split("-")[1])
+
+
 for t in nearby_tickets:
     values = t.split(",")
+    # Number of ok values in ticket
+    values_ok = 0
     for value in values:
         v = int(value)
+        # Adding the value to the sum of invalid values (even if valid !)
         sum_invalid_values += v
         for rule_key in rules.keys():
-            value_rules = rules[rule_key].split(",")
-            if int(value_rules[0].split("-")[0]) <= v <= int(value_rules[0].split("-")[1]) or int(value_rules[1].split("-")[0]) <= v <= int(value_rules[1].split("-")[1]):
+            # Test the value to the rule.
+            if value_is_valid(v, rules[rule_key]):
+                # Substracting the value from the sum if it's valid
                 sum_invalid_values -= v
+                # Increment the number of ok values in the ticket
+                values_ok += 1
+                # Evaluate next value
                 break
+    # If all values are ok, we add the ticket to the valid tickets' set
+    if values_ok == len(values):
+        valid_tickets.append(t)
+
 print "The ticket scanning error rate is", sum_invalid_values
