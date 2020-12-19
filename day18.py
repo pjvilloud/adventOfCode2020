@@ -380,7 +380,78 @@ input = """8 * 6 * 6 * 4 * (8 + 5 * 2 + 5 + 6 + 3) * 4
 4 + (3 + 5 + 2 + 8 * 6 + (2 * 6 + 5)) + (7 + 2 * 4 * 8) + 6 + 4"""
 
 
-def compute_simple_expression(expression):
+def add_closing_parenthesis(expression_list, i):
+    nb_closing_parenthesis = 0
+    nb_opening_parenthesis = 0
+    j = i + 1
+    while j <= len(expression_list):
+        if j == len(expression_list):
+            expression_list.append(")")
+            i += 1
+            break
+            # expression_list[j - 1] = expression_list[j - 1] + ")"
+        elif (expression_list[j] == "*" or expression_list[j] == "+") and nb_opening_parenthesis == nb_closing_parenthesis:
+            expression_list.insert(j - 1, ")")
+            i += 1
+            # expression_list[j - 2] = expression_list[j - 2] + ")"
+            break
+        elif expression_list[j] == "(":
+            nb_opening_parenthesis += 1
+        elif expression_list[j] == ")":
+            if nb_opening_parenthesis == nb_closing_parenthesis:
+                expression_list.insert(j, ")")
+                j += 1
+                i += 1
+                # expression_list[j] = "))"
+                break
+            nb_closing_parenthesis += 1
+        j += 1
+    return i
+
+
+def add_opening_parenthesis(expression_list, i):
+    nb_closing_parenthesis = 0
+    nb_opening_parenthesis = 0
+    j = i - 1
+    while j >= 0:
+        if j == 0:
+            expression_list.insert(0, "(")
+            i += 1
+            # expression_list[j] = "(" + expression_list[j]
+        elif (expression_list[j] == "*" or expression_list[j] == "+") and nb_opening_parenthesis == nb_closing_parenthesis:
+            expression_list.insert(j+2, "(")
+            i += 1
+
+            # expression_list[j + 2] = "(" + expression_list[j + 2]
+            break
+        elif expression_list[j] == "(":
+            if nb_opening_parenthesis == nb_closing_parenthesis:
+                expression_list.insert(j, "(")
+                i += 1
+
+                # expression_list[j] = "(("
+                break
+            nb_opening_parenthesis += 1
+        elif expression_list[j] == ")":
+            nb_closing_parenthesis += 1
+        j -= 1
+    return i
+
+
+def add_plus_parenthesis(expression):
+    expression_list = list(expression)
+    i = 0
+    while i < len(expression_list):
+        if expression_list[i] == '+':
+            i = add_opening_parenthesis(expression_list, i)
+            i = add_closing_parenthesis(expression_list, i)
+        i += 1
+    return "".join(expression_list)
+
+
+def compute_simple_expression(expression, v2=False):
+    if v2:
+        expression = add_plus_parenthesis(expression)
     terms = expression.split()
     expression_pos = 0
     res = 0
@@ -419,8 +490,13 @@ def compute_simple_expression(expression):
         i += 1
     return res
 
-total = 0
-for expr in input.splitlines():
-    total += compute_simple_expression(expr)
 
-print "The sum of all the expressions is", total
+total_v1 = 0
+total_v2 = 0
+for expr in input.splitlines():
+    total_v1 += compute_simple_expression(expr)
+    total_v2 += compute_simple_expression(expr, True)
+
+print "The sum of all the expressions in part 1 is", total_v1
+print "The sum of all the expressions in part 2 is", total_v2
+
